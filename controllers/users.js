@@ -25,5 +25,18 @@ module.exports = {
             isDeleted: false,
             _id: id
         })
+    },
+    ChangePassword: async function (userId, oldpassword, newpassword) {
+        let user = await userModel.findById(userId);
+        if (!user) {
+            throw new Error("Người dùng không tồn tại");
+        }
+        let bcrypt = require('bcrypt');
+        if (!bcrypt.compareSync(oldpassword, user.password)) {
+            throw new Error("Mật khẩu cũ không chính xác");
+        }
+        user.password = newpassword;
+        await user.save();
+        return user;
     }
 }
